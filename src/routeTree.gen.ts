@@ -14,8 +14,15 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as AuthRegisterRouteImport } from './routes/auth.register'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
+import { Route as AgentReportsRouteImport } from './routes/agent.reports'
 import { Route as AgentPropertiesRouteImport } from './routes/agent.properties'
+import { Route as AgentProfileRouteImport } from './routes/agent.profile'
+import { Route as AgentInquiriesRouteImport } from './routes/agent.inquiries'
 import { Route as AgentPropertiesIndexRouteImport } from './routes/agent.properties.index'
+import { Route as AgentPropertiesNewRouteImport } from './routes/agent.properties.new'
+import { Route as AgentPropertiesFeaturedRouteImport } from './routes/agent.properties.featured'
+import { Route as AgentPropertiesAvailableRouteImport } from './routes/agent.properties.available'
+import { Route as AgentPropertiesIdEditRouteImport } from './routes/agent.properties.$id.edit'
 
 const AgentRoute = AgentRouteImport.update({
   id: '/agent',
@@ -42,9 +49,24 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentReportsRoute = AgentReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AgentRoute,
+} as any)
 const AgentPropertiesRoute = AgentPropertiesRouteImport.update({
   id: '/properties',
   path: '/properties',
+  getParentRoute: () => AgentRoute,
+} as any)
+const AgentProfileRoute = AgentProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AgentRoute,
+} as any)
+const AgentInquiriesRoute = AgentInquiriesRouteImport.update({
+  id: '/inquiries',
+  path: '/inquiries',
   getParentRoute: () => AgentRoute,
 } as any)
 const AgentPropertiesIndexRoute = AgentPropertiesIndexRouteImport.update({
@@ -52,54 +74,122 @@ const AgentPropertiesIndexRoute = AgentPropertiesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AgentPropertiesRoute,
 } as any)
+const AgentPropertiesNewRoute = AgentPropertiesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AgentPropertiesRoute,
+} as any)
+const AgentPropertiesFeaturedRoute = AgentPropertiesFeaturedRouteImport.update({
+  id: '/featured',
+  path: '/featured',
+  getParentRoute: () => AgentPropertiesRoute,
+} as any)
+const AgentPropertiesAvailableRoute =
+  AgentPropertiesAvailableRouteImport.update({
+    id: '/available',
+    path: '/available',
+    getParentRoute: () => AgentPropertiesRoute,
+  } as any)
+const AgentPropertiesIdEditRoute = AgentPropertiesIdEditRouteImport.update({
+  id: '/$id/edit',
+  path: '/$id/edit',
+  getParentRoute: () => AgentPropertiesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agent': typeof AgentRouteWithChildren
+  '/agent/inquiries': typeof AgentInquiriesRoute
+  '/agent/profile': typeof AgentProfileRoute
   '/agent/properties': typeof AgentPropertiesRouteWithChildren
+  '/agent/reports': typeof AgentReportsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/agent/': typeof AgentIndexRoute
+  '/agent/properties/available': typeof AgentPropertiesAvailableRoute
+  '/agent/properties/featured': typeof AgentPropertiesFeaturedRoute
+  '/agent/properties/new': typeof AgentPropertiesNewRoute
   '/agent/properties/': typeof AgentPropertiesIndexRoute
+  '/agent/properties/$id/edit': typeof AgentPropertiesIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agent/inquiries': typeof AgentInquiriesRoute
+  '/agent/profile': typeof AgentProfileRoute
+  '/agent/reports': typeof AgentReportsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/agent': typeof AgentIndexRoute
+  '/agent/properties/available': typeof AgentPropertiesAvailableRoute
+  '/agent/properties/featured': typeof AgentPropertiesFeaturedRoute
+  '/agent/properties/new': typeof AgentPropertiesNewRoute
   '/agent/properties': typeof AgentPropertiesIndexRoute
+  '/agent/properties/$id/edit': typeof AgentPropertiesIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agent': typeof AgentRouteWithChildren
+  '/agent/inquiries': typeof AgentInquiriesRoute
+  '/agent/profile': typeof AgentProfileRoute
   '/agent/properties': typeof AgentPropertiesRouteWithChildren
+  '/agent/reports': typeof AgentReportsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/agent/': typeof AgentIndexRoute
+  '/agent/properties/available': typeof AgentPropertiesAvailableRoute
+  '/agent/properties/featured': typeof AgentPropertiesFeaturedRoute
+  '/agent/properties/new': typeof AgentPropertiesNewRoute
   '/agent/properties/': typeof AgentPropertiesIndexRoute
+  '/agent/properties/$id/edit': typeof AgentPropertiesIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/agent'
+    | '/agent/inquiries'
+    | '/agent/profile'
     | '/agent/properties'
+    | '/agent/reports'
     | '/auth/login'
     | '/auth/register'
     | '/agent/'
+    | '/agent/properties/available'
+    | '/agent/properties/featured'
+    | '/agent/properties/new'
     | '/agent/properties/'
+    | '/agent/properties/$id/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/login' | '/auth/register' | '/agent' | '/agent/properties'
+  to:
+    | '/'
+    | '/agent/inquiries'
+    | '/agent/profile'
+    | '/agent/reports'
+    | '/auth/login'
+    | '/auth/register'
+    | '/agent'
+    | '/agent/properties/available'
+    | '/agent/properties/featured'
+    | '/agent/properties/new'
+    | '/agent/properties'
+    | '/agent/properties/$id/edit'
   id:
     | '__root__'
     | '/'
     | '/agent'
+    | '/agent/inquiries'
+    | '/agent/profile'
     | '/agent/properties'
+    | '/agent/reports'
     | '/auth/login'
     | '/auth/register'
     | '/agent/'
+    | '/agent/properties/available'
+    | '/agent/properties/featured'
+    | '/agent/properties/new'
     | '/agent/properties/'
+    | '/agent/properties/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -146,11 +236,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent/reports': {
+      id: '/agent/reports'
+      path: '/reports'
+      fullPath: '/agent/reports'
+      preLoaderRoute: typeof AgentReportsRouteImport
+      parentRoute: typeof AgentRoute
+    }
     '/agent/properties': {
       id: '/agent/properties'
       path: '/properties'
       fullPath: '/agent/properties'
       preLoaderRoute: typeof AgentPropertiesRouteImport
+      parentRoute: typeof AgentRoute
+    }
+    '/agent/profile': {
+      id: '/agent/profile'
+      path: '/profile'
+      fullPath: '/agent/profile'
+      preLoaderRoute: typeof AgentProfileRouteImport
+      parentRoute: typeof AgentRoute
+    }
+    '/agent/inquiries': {
+      id: '/agent/inquiries'
+      path: '/inquiries'
+      fullPath: '/agent/inquiries'
+      preLoaderRoute: typeof AgentInquiriesRouteImport
       parentRoute: typeof AgentRoute
     }
     '/agent/properties/': {
@@ -160,15 +271,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentPropertiesIndexRouteImport
       parentRoute: typeof AgentPropertiesRoute
     }
+    '/agent/properties/new': {
+      id: '/agent/properties/new'
+      path: '/new'
+      fullPath: '/agent/properties/new'
+      preLoaderRoute: typeof AgentPropertiesNewRouteImport
+      parentRoute: typeof AgentPropertiesRoute
+    }
+    '/agent/properties/featured': {
+      id: '/agent/properties/featured'
+      path: '/featured'
+      fullPath: '/agent/properties/featured'
+      preLoaderRoute: typeof AgentPropertiesFeaturedRouteImport
+      parentRoute: typeof AgentPropertiesRoute
+    }
+    '/agent/properties/available': {
+      id: '/agent/properties/available'
+      path: '/available'
+      fullPath: '/agent/properties/available'
+      preLoaderRoute: typeof AgentPropertiesAvailableRouteImport
+      parentRoute: typeof AgentPropertiesRoute
+    }
+    '/agent/properties/$id/edit': {
+      id: '/agent/properties/$id/edit'
+      path: '/$id/edit'
+      fullPath: '/agent/properties/$id/edit'
+      preLoaderRoute: typeof AgentPropertiesIdEditRouteImport
+      parentRoute: typeof AgentPropertiesRoute
+    }
   }
 }
 
 interface AgentPropertiesRouteChildren {
+  AgentPropertiesAvailableRoute: typeof AgentPropertiesAvailableRoute
+  AgentPropertiesFeaturedRoute: typeof AgentPropertiesFeaturedRoute
+  AgentPropertiesNewRoute: typeof AgentPropertiesNewRoute
   AgentPropertiesIndexRoute: typeof AgentPropertiesIndexRoute
+  AgentPropertiesIdEditRoute: typeof AgentPropertiesIdEditRoute
 }
 
 const AgentPropertiesRouteChildren: AgentPropertiesRouteChildren = {
+  AgentPropertiesAvailableRoute: AgentPropertiesAvailableRoute,
+  AgentPropertiesFeaturedRoute: AgentPropertiesFeaturedRoute,
+  AgentPropertiesNewRoute: AgentPropertiesNewRoute,
   AgentPropertiesIndexRoute: AgentPropertiesIndexRoute,
+  AgentPropertiesIdEditRoute: AgentPropertiesIdEditRoute,
 }
 
 const AgentPropertiesRouteWithChildren = AgentPropertiesRoute._addFileChildren(
@@ -176,12 +323,18 @@ const AgentPropertiesRouteWithChildren = AgentPropertiesRoute._addFileChildren(
 )
 
 interface AgentRouteChildren {
+  AgentInquiriesRoute: typeof AgentInquiriesRoute
+  AgentProfileRoute: typeof AgentProfileRoute
   AgentPropertiesRoute: typeof AgentPropertiesRouteWithChildren
+  AgentReportsRoute: typeof AgentReportsRoute
   AgentIndexRoute: typeof AgentIndexRoute
 }
 
 const AgentRouteChildren: AgentRouteChildren = {
+  AgentInquiriesRoute: AgentInquiriesRoute,
+  AgentProfileRoute: AgentProfileRoute,
   AgentPropertiesRoute: AgentPropertiesRouteWithChildren,
+  AgentReportsRoute: AgentReportsRoute,
   AgentIndexRoute: AgentIndexRoute,
 }
 
