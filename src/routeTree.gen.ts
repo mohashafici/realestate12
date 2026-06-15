@@ -9,14 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AgentRouteImport } from './routes/agent'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as AuthRegisterRouteImport } from './routes/auth.register'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
+import { Route as AgentPropertiesRouteImport } from './routes/agent.properties'
+import { Route as AgentPropertiesIndexRouteImport } from './routes/agent.properties.index'
 
+const AgentRoute = AgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AgentIndexRoute = AgentIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AgentRoute,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/auth/register',
@@ -28,45 +42,95 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentPropertiesRoute = AgentPropertiesRouteImport.update({
+  id: '/properties',
+  path: '/properties',
+  getParentRoute: () => AgentRoute,
+} as any)
+const AgentPropertiesIndexRoute = AgentPropertiesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AgentPropertiesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agent': typeof AgentRouteWithChildren
+  '/agent/properties': typeof AgentPropertiesRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/agent/': typeof AgentIndexRoute
+  '/agent/properties/': typeof AgentPropertiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/agent': typeof AgentIndexRoute
+  '/agent/properties': typeof AgentPropertiesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agent': typeof AgentRouteWithChildren
+  '/agent/properties': typeof AgentPropertiesRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/agent/': typeof AgentIndexRoute
+  '/agent/properties/': typeof AgentPropertiesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth/login' | '/auth/register'
+  fullPaths:
+    | '/'
+    | '/agent'
+    | '/agent/properties'
+    | '/auth/login'
+    | '/auth/register'
+    | '/agent/'
+    | '/agent/properties/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/login' | '/auth/register'
-  id: '__root__' | '/' | '/auth/login' | '/auth/register'
+  to: '/' | '/auth/login' | '/auth/register' | '/agent' | '/agent/properties'
+  id:
+    | '__root__'
+    | '/'
+    | '/agent'
+    | '/agent/properties'
+    | '/auth/login'
+    | '/auth/register'
+    | '/agent/'
+    | '/agent/properties/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgentRoute: typeof AgentRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/agent': {
+      id: '/agent'
+      path: '/agent'
+      fullPath: '/agent'
+      preLoaderRoute: typeof AgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/agent/': {
+      id: '/agent/'
+      path: '/'
+      fullPath: '/agent/'
+      preLoaderRoute: typeof AgentIndexRouteImport
+      parentRoute: typeof AgentRoute
     }
     '/auth/register': {
       id: '/auth/register'
@@ -82,11 +146,50 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agent/properties': {
+      id: '/agent/properties'
+      path: '/properties'
+      fullPath: '/agent/properties'
+      preLoaderRoute: typeof AgentPropertiesRouteImport
+      parentRoute: typeof AgentRoute
+    }
+    '/agent/properties/': {
+      id: '/agent/properties/'
+      path: '/'
+      fullPath: '/agent/properties/'
+      preLoaderRoute: typeof AgentPropertiesIndexRouteImport
+      parentRoute: typeof AgentPropertiesRoute
+    }
   }
 }
 
+interface AgentPropertiesRouteChildren {
+  AgentPropertiesIndexRoute: typeof AgentPropertiesIndexRoute
+}
+
+const AgentPropertiesRouteChildren: AgentPropertiesRouteChildren = {
+  AgentPropertiesIndexRoute: AgentPropertiesIndexRoute,
+}
+
+const AgentPropertiesRouteWithChildren = AgentPropertiesRoute._addFileChildren(
+  AgentPropertiesRouteChildren,
+)
+
+interface AgentRouteChildren {
+  AgentPropertiesRoute: typeof AgentPropertiesRouteWithChildren
+  AgentIndexRoute: typeof AgentIndexRoute
+}
+
+const AgentRouteChildren: AgentRouteChildren = {
+  AgentPropertiesRoute: AgentPropertiesRouteWithChildren,
+  AgentIndexRoute: AgentIndexRoute,
+}
+
+const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgentRoute: AgentRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
 }
