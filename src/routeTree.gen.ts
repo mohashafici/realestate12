@@ -9,21 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as BuyerRouteImport } from './routes/buyer'
 import { Route as AgentRouteImport } from './routes/agent'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BuyerIndexRouteImport } from './routes/buyer.index'
 import { Route as AgentIndexRouteImport } from './routes/agent.index'
+import { Route as BuyerPropertiesRouteImport } from './routes/buyer.properties'
+import { Route as BuyerProfileRouteImport } from './routes/buyer.profile'
+import { Route as BuyerInquiriesRouteImport } from './routes/buyer.inquiries'
+import { Route as BuyerFavoritesRouteImport } from './routes/buyer.favorites'
 import { Route as AuthRegisterRouteImport } from './routes/auth.register'
 import { Route as AuthLoginRouteImport } from './routes/auth.login'
 import { Route as AgentReportsRouteImport } from './routes/agent.reports'
 import { Route as AgentPropertiesRouteImport } from './routes/agent.properties'
 import { Route as AgentProfileRouteImport } from './routes/agent.profile'
 import { Route as AgentInquiriesRouteImport } from './routes/agent.inquiries'
+import { Route as BuyerPropertiesIndexRouteImport } from './routes/buyer.properties.index'
 import { Route as AgentPropertiesIndexRouteImport } from './routes/agent.properties.index'
+import { Route as BuyerPropertiesIdRouteImport } from './routes/buyer.properties.$id'
 import { Route as AgentPropertiesNewRouteImport } from './routes/agent.properties.new'
 import { Route as AgentPropertiesFeaturedRouteImport } from './routes/agent.properties.featured'
 import { Route as AgentPropertiesAvailableRouteImport } from './routes/agent.properties.available'
 import { Route as AgentPropertiesIdEditRouteImport } from './routes/agent.properties.$id.edit'
 
+const BuyerRoute = BuyerRouteImport.update({
+  id: '/buyer',
+  path: '/buyer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentRoute = AgentRouteImport.update({
   id: '/agent',
   path: '/agent',
@@ -34,10 +47,35 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyerIndexRoute = BuyerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerRoute,
+} as any)
 const AgentIndexRoute = AgentIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AgentRoute,
+} as any)
+const BuyerPropertiesRoute = BuyerPropertiesRouteImport.update({
+  id: '/properties',
+  path: '/properties',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerProfileRoute = BuyerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerInquiriesRoute = BuyerInquiriesRouteImport.update({
+  id: '/inquiries',
+  path: '/inquiries',
+  getParentRoute: () => BuyerRoute,
+} as any)
+const BuyerFavoritesRoute = BuyerFavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => BuyerRoute,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/auth/register',
@@ -69,10 +107,20 @@ const AgentInquiriesRoute = AgentInquiriesRouteImport.update({
   path: '/inquiries',
   getParentRoute: () => AgentRoute,
 } as any)
+const BuyerPropertiesIndexRoute = BuyerPropertiesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BuyerPropertiesRoute,
+} as any)
 const AgentPropertiesIndexRoute = AgentPropertiesIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AgentPropertiesRoute,
+} as any)
+const BuyerPropertiesIdRoute = BuyerPropertiesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => BuyerPropertiesRoute,
 } as any)
 const AgentPropertiesNewRoute = AgentPropertiesNewRouteImport.update({
   id: '/new',
@@ -99,17 +147,25 @@ const AgentPropertiesIdEditRoute = AgentPropertiesIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agent': typeof AgentRouteWithChildren
+  '/buyer': typeof BuyerRouteWithChildren
   '/agent/inquiries': typeof AgentInquiriesRoute
   '/agent/profile': typeof AgentProfileRoute
   '/agent/properties': typeof AgentPropertiesRouteWithChildren
   '/agent/reports': typeof AgentReportsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/buyer/favorites': typeof BuyerFavoritesRoute
+  '/buyer/inquiries': typeof BuyerInquiriesRoute
+  '/buyer/profile': typeof BuyerProfileRoute
+  '/buyer/properties': typeof BuyerPropertiesRouteWithChildren
   '/agent/': typeof AgentIndexRoute
+  '/buyer/': typeof BuyerIndexRoute
   '/agent/properties/available': typeof AgentPropertiesAvailableRoute
   '/agent/properties/featured': typeof AgentPropertiesFeaturedRoute
   '/agent/properties/new': typeof AgentPropertiesNewRoute
+  '/buyer/properties/$id': typeof BuyerPropertiesIdRoute
   '/agent/properties/': typeof AgentPropertiesIndexRoute
+  '/buyer/properties/': typeof BuyerPropertiesIndexRoute
   '/agent/properties/$id/edit': typeof AgentPropertiesIdEditRoute
 }
 export interface FileRoutesByTo {
@@ -119,28 +175,42 @@ export interface FileRoutesByTo {
   '/agent/reports': typeof AgentReportsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/buyer/favorites': typeof BuyerFavoritesRoute
+  '/buyer/inquiries': typeof BuyerInquiriesRoute
+  '/buyer/profile': typeof BuyerProfileRoute
   '/agent': typeof AgentIndexRoute
+  '/buyer': typeof BuyerIndexRoute
   '/agent/properties/available': typeof AgentPropertiesAvailableRoute
   '/agent/properties/featured': typeof AgentPropertiesFeaturedRoute
   '/agent/properties/new': typeof AgentPropertiesNewRoute
+  '/buyer/properties/$id': typeof BuyerPropertiesIdRoute
   '/agent/properties': typeof AgentPropertiesIndexRoute
+  '/buyer/properties': typeof BuyerPropertiesIndexRoute
   '/agent/properties/$id/edit': typeof AgentPropertiesIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agent': typeof AgentRouteWithChildren
+  '/buyer': typeof BuyerRouteWithChildren
   '/agent/inquiries': typeof AgentInquiriesRoute
   '/agent/profile': typeof AgentProfileRoute
   '/agent/properties': typeof AgentPropertiesRouteWithChildren
   '/agent/reports': typeof AgentReportsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/buyer/favorites': typeof BuyerFavoritesRoute
+  '/buyer/inquiries': typeof BuyerInquiriesRoute
+  '/buyer/profile': typeof BuyerProfileRoute
+  '/buyer/properties': typeof BuyerPropertiesRouteWithChildren
   '/agent/': typeof AgentIndexRoute
+  '/buyer/': typeof BuyerIndexRoute
   '/agent/properties/available': typeof AgentPropertiesAvailableRoute
   '/agent/properties/featured': typeof AgentPropertiesFeaturedRoute
   '/agent/properties/new': typeof AgentPropertiesNewRoute
+  '/buyer/properties/$id': typeof BuyerPropertiesIdRoute
   '/agent/properties/': typeof AgentPropertiesIndexRoute
+  '/buyer/properties/': typeof BuyerPropertiesIndexRoute
   '/agent/properties/$id/edit': typeof AgentPropertiesIdEditRoute
 }
 export interface FileRouteTypes {
@@ -148,17 +218,25 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/agent'
+    | '/buyer'
     | '/agent/inquiries'
     | '/agent/profile'
     | '/agent/properties'
     | '/agent/reports'
     | '/auth/login'
     | '/auth/register'
+    | '/buyer/favorites'
+    | '/buyer/inquiries'
+    | '/buyer/profile'
+    | '/buyer/properties'
     | '/agent/'
+    | '/buyer/'
     | '/agent/properties/available'
     | '/agent/properties/featured'
     | '/agent/properties/new'
+    | '/buyer/properties/$id'
     | '/agent/properties/'
+    | '/buyer/properties/'
     | '/agent/properties/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -168,39 +246,61 @@ export interface FileRouteTypes {
     | '/agent/reports'
     | '/auth/login'
     | '/auth/register'
+    | '/buyer/favorites'
+    | '/buyer/inquiries'
+    | '/buyer/profile'
     | '/agent'
+    | '/buyer'
     | '/agent/properties/available'
     | '/agent/properties/featured'
     | '/agent/properties/new'
+    | '/buyer/properties/$id'
     | '/agent/properties'
+    | '/buyer/properties'
     | '/agent/properties/$id/edit'
   id:
     | '__root__'
     | '/'
     | '/agent'
+    | '/buyer'
     | '/agent/inquiries'
     | '/agent/profile'
     | '/agent/properties'
     | '/agent/reports'
     | '/auth/login'
     | '/auth/register'
+    | '/buyer/favorites'
+    | '/buyer/inquiries'
+    | '/buyer/profile'
+    | '/buyer/properties'
     | '/agent/'
+    | '/buyer/'
     | '/agent/properties/available'
     | '/agent/properties/featured'
     | '/agent/properties/new'
+    | '/buyer/properties/$id'
     | '/agent/properties/'
+    | '/buyer/properties/'
     | '/agent/properties/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgentRoute: typeof AgentRouteWithChildren
+  BuyerRoute: typeof BuyerRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/buyer': {
+      id: '/buyer'
+      path: '/buyer'
+      fullPath: '/buyer'
+      preLoaderRoute: typeof BuyerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agent': {
       id: '/agent'
       path: '/agent'
@@ -215,12 +315,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buyer/': {
+      id: '/buyer/'
+      path: '/'
+      fullPath: '/buyer/'
+      preLoaderRoute: typeof BuyerIndexRouteImport
+      parentRoute: typeof BuyerRoute
+    }
     '/agent/': {
       id: '/agent/'
       path: '/'
       fullPath: '/agent/'
       preLoaderRoute: typeof AgentIndexRouteImport
       parentRoute: typeof AgentRoute
+    }
+    '/buyer/properties': {
+      id: '/buyer/properties'
+      path: '/properties'
+      fullPath: '/buyer/properties'
+      preLoaderRoute: typeof BuyerPropertiesRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/profile': {
+      id: '/buyer/profile'
+      path: '/profile'
+      fullPath: '/buyer/profile'
+      preLoaderRoute: typeof BuyerProfileRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/inquiries': {
+      id: '/buyer/inquiries'
+      path: '/inquiries'
+      fullPath: '/buyer/inquiries'
+      preLoaderRoute: typeof BuyerInquiriesRouteImport
+      parentRoute: typeof BuyerRoute
+    }
+    '/buyer/favorites': {
+      id: '/buyer/favorites'
+      path: '/favorites'
+      fullPath: '/buyer/favorites'
+      preLoaderRoute: typeof BuyerFavoritesRouteImport
+      parentRoute: typeof BuyerRoute
     }
     '/auth/register': {
       id: '/auth/register'
@@ -264,12 +399,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentInquiriesRouteImport
       parentRoute: typeof AgentRoute
     }
+    '/buyer/properties/': {
+      id: '/buyer/properties/'
+      path: '/'
+      fullPath: '/buyer/properties/'
+      preLoaderRoute: typeof BuyerPropertiesIndexRouteImport
+      parentRoute: typeof BuyerPropertiesRoute
+    }
     '/agent/properties/': {
       id: '/agent/properties/'
       path: '/'
       fullPath: '/agent/properties/'
       preLoaderRoute: typeof AgentPropertiesIndexRouteImport
       parentRoute: typeof AgentPropertiesRoute
+    }
+    '/buyer/properties/$id': {
+      id: '/buyer/properties/$id'
+      path: '/$id'
+      fullPath: '/buyer/properties/$id'
+      preLoaderRoute: typeof BuyerPropertiesIdRouteImport
+      parentRoute: typeof BuyerPropertiesRoute
     }
     '/agent/properties/new': {
       id: '/agent/properties/new'
@@ -340,9 +489,42 @@ const AgentRouteChildren: AgentRouteChildren = {
 
 const AgentRouteWithChildren = AgentRoute._addFileChildren(AgentRouteChildren)
 
+interface BuyerPropertiesRouteChildren {
+  BuyerPropertiesIdRoute: typeof BuyerPropertiesIdRoute
+  BuyerPropertiesIndexRoute: typeof BuyerPropertiesIndexRoute
+}
+
+const BuyerPropertiesRouteChildren: BuyerPropertiesRouteChildren = {
+  BuyerPropertiesIdRoute: BuyerPropertiesIdRoute,
+  BuyerPropertiesIndexRoute: BuyerPropertiesIndexRoute,
+}
+
+const BuyerPropertiesRouteWithChildren = BuyerPropertiesRoute._addFileChildren(
+  BuyerPropertiesRouteChildren,
+)
+
+interface BuyerRouteChildren {
+  BuyerFavoritesRoute: typeof BuyerFavoritesRoute
+  BuyerInquiriesRoute: typeof BuyerInquiriesRoute
+  BuyerProfileRoute: typeof BuyerProfileRoute
+  BuyerPropertiesRoute: typeof BuyerPropertiesRouteWithChildren
+  BuyerIndexRoute: typeof BuyerIndexRoute
+}
+
+const BuyerRouteChildren: BuyerRouteChildren = {
+  BuyerFavoritesRoute: BuyerFavoritesRoute,
+  BuyerInquiriesRoute: BuyerInquiriesRoute,
+  BuyerProfileRoute: BuyerProfileRoute,
+  BuyerPropertiesRoute: BuyerPropertiesRouteWithChildren,
+  BuyerIndexRoute: BuyerIndexRoute,
+}
+
+const BuyerRouteWithChildren = BuyerRoute._addFileChildren(BuyerRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgentRoute: AgentRouteWithChildren,
+  BuyerRoute: BuyerRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
 }
