@@ -23,25 +23,28 @@ const items = [
 
 function AgentLayout() {
   const navigate = useNavigate();
-  const user = useApp((s) => s.users.find((u) => u.id === s.currentUserId) ?? null);
+  const ready = useApp((s) => s.ready);
+  const userId = useApp((s) => s.currentUserId);
+  const user = useApp((s) => s.users.find((u) => u.id === userId) ?? null);
   const logout = useApp((s) => s.logout);
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!user) navigate({ to: "/auth/login", replace: true });
-    else if (user.role !== "agent") navigate({ to: "/buyer", replace: true });
-  }, [user, navigate]);
+    if (!ready) return;
+    if (!userId) navigate({ to: "/auth/login", replace: true });
+    else if (user && user.role !== "agent") navigate({ to: "/buyer", replace: true });
+  }, [ready, userId, user, navigate]);
 
   useEffect(() => { setOpen(false); }, [pathname]);
 
-  if (!user || user.role !== "agent") return null;
+  if (!ready || !user || user.role !== "agent") return null;
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname === to || pathname.startsWith(to + "/");
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    await logout();
     navigate({ to: "/auth/login", replace: true });
   }
 

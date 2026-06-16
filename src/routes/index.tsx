@@ -9,12 +9,14 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   const navigate = useNavigate();
+  const ready = useApp((s) => s.ready);
   const userId = useApp((s) => s.currentUserId);
   const user = useApp((s) => s.users.find((u) => u.id === userId) ?? null);
   useEffect(() => {
-    if (!user) navigate({ to: "/auth/login", replace: true });
-    else navigate({ to: user.role === "agent" ? "/agent" : "/buyer", replace: true });
-  }, [user, navigate]);
+    if (!ready) return;
+    if (!userId) navigate({ to: "/auth/login", replace: true });
+    else if (user) navigate({ to: user.role === "agent" ? "/agent" : "/buyer", replace: true });
+  }, [ready, userId, user, navigate]);
   return (
     <div className="grid min-h-screen place-items-center bg-background">
       <div className="text-muted-foreground">Loading…</div>
