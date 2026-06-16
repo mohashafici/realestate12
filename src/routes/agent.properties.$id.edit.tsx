@@ -25,7 +25,11 @@ function EditProperty() {
     <NewOrEditWrapper title="Edit property">
       <PropertyForm
         initial={property}
-        onSubmit={(data) => { update(id, data); toast.success("Changes saved"); navigate({ to: "/agent/properties" }); }}
+        onSubmit={async ({ data, newFiles, removedPaths }) => {
+          await update(id, data, newFiles, removedPaths);
+          toast.success("Changes saved");
+          navigate({ to: "/agent/properties" });
+        }}
         submitLabel="Save changes"
       />
     </NewOrEditWrapper>

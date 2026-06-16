@@ -17,15 +17,21 @@ function RegisterPage() {
   const navigate = useNavigate();
   const register = useApp((s) => s.register);
   const [form, setForm] = useState({ full_name: "", email: "", password: "", confirm: "", role: "buyer" as Role });
+  const [busy, setBusy] = useState(false);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (form.password.length < 6) return toast.error("Password must be at least 6 characters");
     if (form.password !== form.confirm) return toast.error("Passwords don't match");
-    const res = register({ full_name: form.full_name.trim(), email: form.email.trim(), password: form.password, role: form.role });
-    if (!res.ok) return toast.error(res.error ?? "Registration failed");
-    toast.success("Account created");
-    navigate({ to: form.role === "agent" ? "/agent" : "/buyer", replace: true });
+    setBusy(true);
+    try {
+      const res = await register({ full_name: form.full_name.trim(), email: form.email.trim(), password: form.password, role: form.role });
+      if (!res.ok) return toast.error(res.error ?? "Registration failed");
+      toast.success("Account created");
+      navigate({ to: form.role === "agent" ? "/agent" : "/buyer", replace: true });
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -69,7 +75,7 @@ function RegisterPage() {
               </div>
             </div>
           </div>
-          <Button type="submit" className="w-full">Create account</Button>
+          <Button type="submit" disabled={busy} className="w-full">{busy ? "Creating…" : "Create account"}</Button>
           <p className="text-center text-sm text-muted-foreground">
             Have an account? <Link to="/auth/login" className="font-medium text-accent hover:underline">Sign in</Link>
           </p>

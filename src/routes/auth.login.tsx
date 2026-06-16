@@ -19,14 +19,17 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const res = login(email.trim(), password);
-    setBusy(false);
-    if (!res.ok) { toast.error(res.error ?? "Login failed"); return; }
-    toast.success("Welcome back");
-    navigate({ to: res.role === "agent" ? "/agent" : "/buyer", replace: true });
+    try {
+      const res = await login(email.trim(), password);
+      if (!res.ok) { toast.error(res.error ?? "Login failed"); return; }
+      toast.success("Welcome back");
+      navigate({ to: res.role === "agent" ? "/agent" : "/buyer", replace: true });
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -46,7 +49,7 @@ function LoginPage() {
         <form onSubmit={onSubmit} className="w-full max-w-sm space-y-5">
           <div>
             <h1 className="font-display text-3xl">Sign in</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Use a demo account or your own.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Sign in with your email and password.</p>
           </div>
           <div className="space-y-3">
             <div className="space-y-1.5">
@@ -59,11 +62,6 @@ function LoginPage() {
             </div>
           </div>
           <Button type="submit" disabled={busy} className="w-full">{busy ? "Signing in…" : "Sign in"}</Button>
-          <div className="rounded-xl border border-dashed border-border bg-muted/40 p-3 text-xs text-muted-foreground">
-            <div className="font-medium text-foreground">Demo accounts</div>
-            <div className="mt-1">Agent — <span className="font-mono">agent@demo.com</span> / <span className="font-mono">demo1234</span></div>
-            <div>Buyer — <span className="font-mono">buyer@demo.com</span> / <span className="font-mono">demo1234</span></div>
-          </div>
           <p className="text-center text-sm text-muted-foreground">
             New here? <Link to="/auth/register" className="font-medium text-accent hover:underline">Create an account</Link>
           </p>
