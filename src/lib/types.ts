@@ -4,7 +4,6 @@ export interface User {
   id: string;
   full_name: string;
   email: string;
-  password: string;
   role: Role;
 }
 
@@ -22,6 +21,7 @@ export interface Property {
   bathrooms: number;
   area_size: number;
   images: string[];
+  image_paths?: string[];
   status: PropertyStatus;
   featured: boolean;
   created_by: string;
