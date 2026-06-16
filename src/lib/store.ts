@@ -48,7 +48,7 @@ async function signImagePaths(paths: string[]): Promise<string[]> {
   if (paths.length === 0) return [];
   const { data, error } = await supabase.storage.from("properties-images").createSignedUrls(paths, SIGNED_URL_EXPIRES);
   if (error || !data) return [];
-  return data.map((d) => d.signedUrl);
+  return data.map((d) => d.signedUrl).filter((u): u is string => !!u);
 }
 
 interface PropertyRow {
@@ -258,7 +258,7 @@ export const useApp = create<AppState>()((set, get) => ({
     if (patch.status !== undefined) update.status = patch.status;
     if (patch.featured !== undefined) update.featured = patch.featured;
     if (Object.keys(update).length > 0) {
-      const { error } = await supabase.from("properties").update(update).eq("id", id);
+      const { error } = await supabase.from("properties").update(update as any).eq("id", id);
       if (error) throw error;
     }
     if (removedImagePaths && removedImagePaths.length > 0) {
