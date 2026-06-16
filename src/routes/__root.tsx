@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { useApp } from "@/lib/store";
 
 function NotFoundComponent() {
   return (
@@ -93,6 +94,8 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const init = useApp((s) => s.init);
+  useEffect(() => { init(); }, [init]);
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />

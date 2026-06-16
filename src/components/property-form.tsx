@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Star, X, Plus } from "lucide-react";
+import { Star, X, Upload } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,6 @@ interface FormState {
   bedrooms: number | "";
   bathrooms: number | "";
   area_size: number | "";
-  images: string[];
   status: PropertyStatus;
   featured: boolean;
 }
@@ -29,13 +28,18 @@ interface FormState {
 const defaultState: FormState = {
   title: "", description: "", type: "House", price: "", location: "",
   bedrooms: "", bathrooms: "", area_size: "",
-  images: ["https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1600&q=70"],
   status: "Available", featured: false,
 };
 
+export interface PropertyFormSubmit {
+  data: Omit<Property, "id" | "created_at" | "created_by" | "images" | "image_paths">;
+  newFiles: File[];
+  removedPaths: string[];
+}
+
 export function PropertyForm({ initial, onSubmit, submitLabel }: {
   initial?: Partial<Property>;
-  onSubmit: (data: Omit<Property, "id" | "created_at" | "created_by">) => void;
+  onSubmit: (payload: PropertyFormSubmit) => Promise<void> | void;
   submitLabel: string;
 }) {
   const [form, setForm] = useState<FormState>({
@@ -49,38 +53,62 @@ export function PropertyForm({ initial, onSubmit, submitLabel }: {
       bedrooms: initial.bedrooms ?? "",
       bathrooms: initial.bathrooms ?? "",
       area_size: initial.area_size ?? "",
-      images: initial.images ?? defaultState.images,
       status: initial.status ?? "Available",
       featured: initial.featured ?? false,
     } : {}),
   });
-  const [newImage, setNewImage] = useState("");
 
-  function submit(e: React.FormEvent) {
+  // existing images: parallel arrays
+  const initialImages = initial?.images ?? [];
+  const initialPaths = initial?.image_paths ?? [];
+  const [existingImages, setExistingImages] = useState<{ url: string; path: string }[]>(
+    initialImages.map((url, i) => ({ url, path: initialPaths[i] ?? "" }))
+  );
+  const [removedPaths, setRemovedPaths] = useState<string[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [busy, setBusy] = useState(false);
+
+  function onPickFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    setNewFiles((prev) => [...prev, ...files]);
+    e.target.value = "";
+  }
+
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.title.trim() || !form.location.trim()) return toast.error("Title and location required");
     if (form.price === "" || +form.price <= 0) return toast.error("Enter a valid price");
-    if (form.images.length === 0) return toast.error("Add at least one image");
-    onSubmit({
-      title: form.title.trim(),
-      description: form.description.trim(),
-      type: form.type,
-      price: +form.price,
-      location: form.location.trim(),
-      bedrooms: +(form.bedrooms || 0),
-      bathrooms: +(form.bathrooms || 0),
-      area_size: +(form.area_size || 0),
-      images: form.images,
-      status: form.status,
-      featured: form.featured,
-    });
+    if (existingImages.length + newFiles.length === 0) return toast.error("Add at least one image");
+    setBusy(true);
+    try {
+      await onSubmit({
+        data: {
+          title: form.title.trim(),
+          description: form.description.trim(),
+          type: form.type,
+          price: +form.price,
+          location: form.location.trim(),
+          bedrooms: +(form.bedrooms || 0),
+          bathrooms: +(form.bathrooms || 0),
+          area_size: +(form.area_size || 0),
+          status: form.status,
+          featured: form.featured,
+        },
+        newFiles,
+        removedPaths,
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setBusy(false);
+    }
   }
 
-  function addImage() {
-    const url = newImage.trim();
-    if (!url) return;
-    setForm({ ...form, images: [...form.images, url] });
-    setNewImage("");
+  function removeExisting(i: number) {
+    const img = existingImages[i];
+    if (img.path) setRemovedPaths((p) => [...p, img.path]);
+    setExistingImages(existingImages.filter((_, j) => j !== i));
   }
 
   return (
@@ -137,21 +165,30 @@ export function PropertyForm({ initial, onSubmit, submitLabel }: {
       <div className="space-y-2">
         <Label>Property images</Label>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {form.images.map((url, i) => (
-            <div key={i} className="group relative aspect-square overflow-hidden rounded-xl border border-border">
-              <img src={url} alt="" className="h-full w-full object-cover" />
-              <button type="button" onClick={() => setForm({ ...form, images: form.images.filter((_, j) => j !== i) })}
+          {existingImages.map((img, i) => (
+            <div key={`e-${i}`} className="group relative aspect-square overflow-hidden rounded-xl border border-border">
+              <img src={img.url} alt="" className="h-full w-full object-cover" />
+              <button type="button" onClick={() => removeExisting(i)}
+                className="absolute right-1 top-1 grid h-7 w-7 place-items-center rounded-full bg-background/90 opacity-0 transition group-hover:opacity-100">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ))}
+          {newFiles.map((f, i) => (
+            <div key={`n-${i}`} className="group relative aspect-square overflow-hidden rounded-xl border border-dashed border-accent">
+              <img src={URL.createObjectURL(f)} alt="" className="h-full w-full object-cover" />
+              <button type="button" onClick={() => setNewFiles(newFiles.filter((_, j) => j !== i))}
                 className="absolute right-1 top-1 grid h-7 w-7 place-items-center rounded-full bg-background/90 opacity-0 transition group-hover:opacity-100">
                 <X className="h-3.5 w-3.5" />
               </button>
             </div>
           ))}
         </div>
-        <div className="flex gap-2">
-          <Input placeholder="Paste image URL…" value={newImage} onChange={(e) => setNewImage(e.target.value)} />
-          <Button type="button" variant="outline" onClick={addImage}><Plus className="mr-1 h-4 w-4" /> Add</Button>
-        </div>
-        <p className="text-xs text-muted-foreground">Images by URL (Unsplash works great). Real uploads come with the backend.</p>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-muted">
+          <Upload className="h-4 w-4" /> Upload images
+          <input type="file" accept="image/*" multiple onChange={onPickFiles} className="hidden" />
+        </label>
+        <p className="text-xs text-muted-foreground">Images are stored in Lovable Cloud Storage.</p>
       </div>
 
       <div className="flex items-center justify-between rounded-xl border border-border bg-card p-4">
@@ -167,7 +204,7 @@ export function PropertyForm({ initial, onSubmit, submitLabel }: {
 
       <div className="flex justify-end gap-2">
         <Link to="/agent/properties"><Button type="button" variant="ghost">Cancel</Button></Link>
-        <Button type="submit">{submitLabel}</Button>
+        <Button type="submit" disabled={busy}>{busy ? "Saving…" : submitLabel}</Button>
       </div>
     </form>
   );
@@ -185,10 +222,10 @@ export function NewOrEditWrapper({ children, title }: { children: React.ReactNod
 export function useAddProperty() {
   const navigate = useNavigate();
   const add = useApp((s) => s.addProperty);
-  const user = useApp((s) => s.users.find((u) => u.id === s.currentUserId) ?? null);
-  return (data: Omit<Property, "id" | "created_at" | "created_by">) => {
-    if (!user) return;
-    add(data, user.id);
+  const userId = useApp((s) => s.currentUserId);
+  return async (payload: PropertyFormSubmit) => {
+    if (!userId) return;
+    await add(payload.data, payload.newFiles, userId);
     toast.success("Property saved");
     navigate({ to: "/agent/properties" });
   };
