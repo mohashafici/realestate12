@@ -11,8 +11,9 @@ export const Route = createFileRoute("/buyer/inquiries")({
 
 function MyInquiries() {
   const userId = useApp((s) => s.currentUserId);
-  const inquiries = useApp((s) => s.inquiries.filter((i) => i.buyer_id === userId));
+  const allInquiries = useApp((s) => s.inquiries);
   const properties = useApp((s) => s.properties);
+  const inquiries = allInquiries.filter((i) => i.buyer_id === userId);
 
   return (
     <div className="space-y-6">
