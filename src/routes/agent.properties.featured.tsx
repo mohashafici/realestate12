@@ -9,7 +9,8 @@ export const Route = createFileRoute("/agent/properties/featured")({
 });
 
 function FeaturedProperties() {
-  const list = useApp((s) => s.properties.filter((p) => p.featured));
+  const properties = useApp((s) => s.properties);
+  const list = properties.filter((p) => p.featured);
 
   return (
     <div className="space-y-6">

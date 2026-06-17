@@ -12,9 +12,10 @@ export const Route = createFileRoute("/buyer/favorites")({
 
 function FavoritesPage() {
   const userId = useApp((s) => s.currentUserId);
-  const favorites = useApp((s) => s.favorites.filter((f) => f.buyer_id === userId));
+  const allFavorites = useApp((s) => s.favorites);
   const properties = useApp((s) => s.properties);
   const toggle = useApp((s) => s.toggleFavorite);
+  const favorites = allFavorites.filter((f) => f.buyer_id === userId);
   const list = favorites.map((f) => properties.find((p) => p.id === f.property_id)).filter(Boolean) as typeof properties;
 
   return (
