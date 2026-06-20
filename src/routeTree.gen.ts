@@ -11,8 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as BuyerRouteImport } from './routes/buyer'
 import { Route as AgentRouteImport } from './routes/agent'
-import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as IndexIndexRouteImport } from './routes/index.index'
 import { Route as BuyerIndexRouteImport } from './routes/buyer.index'
 import { Route as AgentIndexRouteImport } from './routes/agent.index'
 import { Route as BuyerPropertiesRouteImport } from './routes/buyer.properties'
@@ -43,14 +43,14 @@ const AgentRoute = AgentRouteImport.update({
   path: '/agent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SplatRoute = SplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexIndexRoute = IndexIndexRouteImport.update({
+  id: '/index/',
+  path: '/index/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuyerIndexRoute = BuyerIndexRouteImport.update({
@@ -152,7 +152,6 @@ const AgentPropertiesIdEditRoute = AgentPropertiesIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$': typeof SplatRoute
   '/agent': typeof AgentRouteWithChildren
   '/buyer': typeof BuyerRouteWithChildren
   '/agent/inquiries': typeof AgentInquiriesRoute
@@ -167,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/buyer/properties': typeof BuyerPropertiesRouteWithChildren
   '/agent/': typeof AgentIndexRoute
   '/buyer/': typeof BuyerIndexRoute
+  '/index/': typeof IndexIndexRoute
   '/agent/properties/available': typeof AgentPropertiesAvailableRoute
   '/agent/properties/featured': typeof AgentPropertiesFeaturedRoute
   '/agent/properties/new': typeof AgentPropertiesNewRoute
@@ -177,7 +177,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$': typeof SplatRoute
   '/agent/inquiries': typeof AgentInquiriesRoute
   '/agent/profile': typeof AgentProfileRoute
   '/agent/reports': typeof AgentReportsRoute
@@ -188,6 +187,7 @@ export interface FileRoutesByTo {
   '/buyer/profile': typeof BuyerProfileRoute
   '/agent': typeof AgentIndexRoute
   '/buyer': typeof BuyerIndexRoute
+  '/index': typeof IndexIndexRoute
   '/agent/properties/available': typeof AgentPropertiesAvailableRoute
   '/agent/properties/featured': typeof AgentPropertiesFeaturedRoute
   '/agent/properties/new': typeof AgentPropertiesNewRoute
@@ -199,7 +199,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$': typeof SplatRoute
   '/agent': typeof AgentRouteWithChildren
   '/buyer': typeof BuyerRouteWithChildren
   '/agent/inquiries': typeof AgentInquiriesRoute
@@ -214,6 +213,7 @@ export interface FileRoutesById {
   '/buyer/properties': typeof BuyerPropertiesRouteWithChildren
   '/agent/': typeof AgentIndexRoute
   '/buyer/': typeof BuyerIndexRoute
+  '/index/': typeof IndexIndexRoute
   '/agent/properties/available': typeof AgentPropertiesAvailableRoute
   '/agent/properties/featured': typeof AgentPropertiesFeaturedRoute
   '/agent/properties/new': typeof AgentPropertiesNewRoute
@@ -226,7 +226,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/$'
     | '/agent'
     | '/buyer'
     | '/agent/inquiries'
@@ -241,6 +240,7 @@ export interface FileRouteTypes {
     | '/buyer/properties'
     | '/agent/'
     | '/buyer/'
+    | '/index/'
     | '/agent/properties/available'
     | '/agent/properties/featured'
     | '/agent/properties/new'
@@ -251,7 +251,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/$'
     | '/agent/inquiries'
     | '/agent/profile'
     | '/agent/reports'
@@ -262,6 +261,7 @@ export interface FileRouteTypes {
     | '/buyer/profile'
     | '/agent'
     | '/buyer'
+    | '/index'
     | '/agent/properties/available'
     | '/agent/properties/featured'
     | '/agent/properties/new'
@@ -272,7 +272,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/$'
     | '/agent'
     | '/buyer'
     | '/agent/inquiries'
@@ -287,6 +286,7 @@ export interface FileRouteTypes {
     | '/buyer/properties'
     | '/agent/'
     | '/buyer/'
+    | '/index/'
     | '/agent/properties/available'
     | '/agent/properties/featured'
     | '/agent/properties/new'
@@ -298,11 +298,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  SplatRoute: typeof SplatRoute
   AgentRoute: typeof AgentRouteWithChildren
   BuyerRoute: typeof BuyerRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  IndexIndexRoute: typeof IndexIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -321,18 +321,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/$': {
-      id: '/$'
-      path: '/$'
-      fullPath: '/$'
-      preLoaderRoute: typeof SplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/index/': {
+      id: '/index/'
+      path: '/index'
+      fullPath: '/index/'
+      preLoaderRoute: typeof IndexIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/buyer/': {
@@ -543,11 +543,11 @@ const BuyerRouteWithChildren = BuyerRoute._addFileChildren(BuyerRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  SplatRoute: SplatRoute,
   AgentRoute: AgentRouteWithChildren,
   BuyerRoute: BuyerRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  IndexIndexRoute: IndexIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
