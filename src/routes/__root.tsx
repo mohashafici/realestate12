@@ -17,6 +17,7 @@ import { useApp } from "@/lib/store";
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <script dangerouslySetInnerHTML={{ __html: "if (location.pathname === '/index') location.replace('/');" }} />
       <div className="max-w-md text-center">
         <h1 className="font-display text-7xl">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Page not found</h2>
