@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as BuyerRouteImport } from './routes/buyer'
 import { Route as AgentRouteImport } from './routes/agent'
+import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BuyerIndexRouteImport } from './routes/buyer.index'
 import { Route as AgentIndexRouteImport } from './routes/agent.index'
@@ -40,6 +41,11 @@ const BuyerRoute = BuyerRouteImport.update({
 const AgentRoute = AgentRouteImport.update({
   id: '/agent',
   path: '/agent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -146,6 +152,7 @@ const AgentPropertiesIdEditRoute = AgentPropertiesIdEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
   '/agent': typeof AgentRouteWithChildren
   '/buyer': typeof BuyerRouteWithChildren
   '/agent/inquiries': typeof AgentInquiriesRoute
@@ -170,6 +177,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
   '/agent/inquiries': typeof AgentInquiriesRoute
   '/agent/profile': typeof AgentProfileRoute
   '/agent/reports': typeof AgentReportsRoute
@@ -191,6 +199,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
   '/agent': typeof AgentRouteWithChildren
   '/buyer': typeof BuyerRouteWithChildren
   '/agent/inquiries': typeof AgentInquiriesRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$'
     | '/agent'
     | '/buyer'
     | '/agent/inquiries'
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$'
     | '/agent/inquiries'
     | '/agent/profile'
     | '/agent/reports'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$'
     | '/agent'
     | '/buyer'
     | '/agent/inquiries'
@@ -286,6 +298,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SplatRoute: typeof SplatRoute
   AgentRoute: typeof AgentRouteWithChildren
   BuyerRoute: typeof BuyerRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
@@ -306,6 +319,13 @@ declare module '@tanstack/react-router' {
       path: '/agent'
       fullPath: '/agent'
       preLoaderRoute: typeof AgentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -523,6 +543,7 @@ const BuyerRouteWithChildren = BuyerRoute._addFileChildren(BuyerRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SplatRoute: SplatRoute,
   AgentRoute: AgentRouteWithChildren,
   BuyerRoute: BuyerRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
@@ -531,13 +552,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
