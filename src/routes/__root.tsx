@@ -4,8 +4,6 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  useLocation,
-  useNavigate,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -17,25 +15,9 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { useApp } from "@/lib/store";
 
 function NotFoundComponent() {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (location.pathname === "/index") {
-      navigate({ to: "/", replace: true });
-    }
-  }, [location.pathname, navigate]);
-
-  if (location.pathname === "/index") {
-    return (
-      <div className="grid min-h-screen place-items-center bg-background">
-        <div className="text-muted-foreground">Loading…</div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <script dangerouslySetInnerHTML={{ __html: "if (location.pathname === '/index') location.replace('/');" }} />
       <div className="max-w-md text-center">
         <h1 className="font-display text-7xl">404</h1>
         <h2 className="mt-4 text-xl font-semibold">Page not found</h2>
