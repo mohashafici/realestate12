@@ -4,6 +4,8 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
+  useNavigate,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -15,6 +17,23 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { useApp } from "@/lib/store";
 
 function NotFoundComponent() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname === "/index") {
+      navigate({ to: "/", replace: true });
+    }
+  }, [location.pathname, navigate]);
+
+  if (location.pathname === "/index") {
+    return (
+      <div className="grid min-h-screen place-items-center bg-background">
+        <div className="text-muted-foreground">Loading…</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
